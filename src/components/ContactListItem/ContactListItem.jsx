@@ -4,8 +4,8 @@ import Button from 'react-bootstrap/Button';
 import styled from 'styled-components';
 
 const Item = styled.li`
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
 `;
 
 export default function ContactListItem({ contact, onDelete }) {

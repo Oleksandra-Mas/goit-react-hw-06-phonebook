@@ -1,79 +1,36 @@
-import { useEffect, useRef, useState } from 'react';
-import shortid from 'shortid';
+import { useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.css';
 import { Alert } from 'react-bootstrap';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import './App.css';
 import ContactForm from './components/ContactForm';
 import ContactList from './components/ContactList';
 import Filter from './components/Filter/';
-import apiLS from './helpers/LocalStorage';
+import { getVisibleContacts } from './store/contacts/selectors';
+import contactsActions from './store/contacts/actions';
 
 export default function App() {
-    const [contacts, setContacts] = useState([]);
-    const [filter, setFilter] = useState('');
+    const contacts = useSelector(getVisibleContacts);
+    const dispatch = useDispatch();
     const firstRender = useRef(true);
 
     useEffect(() => {
         if (firstRender.current) {
-            const contacts = apiLS.getFromList();
-            setContacts(contacts);
-            firstRender.current = false;
-            return;
+            dispatch(contactsActions.getContacts());
         }
-        apiLS.addToList(contacts);
-    }, [contacts]);
-
-    const addContact = data => {
-        checkUniqueName(data.name) === -1
-            ? setContacts(prevCont => [
-                  ...prevCont,
-                  { id: shortid.generate(), ...data },
-              ])
-            : toast(`${data.name} is already in contacts`);
-    };
-
-    const deleteContact = id => {
-        setContacts(prevContacts =>
-            [...prevContacts].filter(contact => contact.id !== id),
-        );
-    };
-
-    const changeFilter = data => {
-        setFilter(data.toLowerCase());
-    };
-
-    const checkUniqueName = name => {
-        return contacts.findIndex(
-            contact => contact.name.toLowerCase() === name.toLowerCase(),
-        );
-    };
-
-    const getFilteredContacts = () => {
-        return contacts.filter(contact =>
-            contact.name.toLowerCase().includes(filter),
-        );
-    };
-
-    const filteredContacts = getFilteredContacts();
+    }, []);
 
     return (
         <div className="App">
             <h1>Phonebook</h1>
-            <ContactForm onSubmit={addContact} />
+            <ContactForm />
             <h2>Contacts</h2>
-            <Filter
-                title={'Find contacts by name'}
-                filter={filter}
-                onChange={changeFilter}
-            />
-            {filteredContacts.length ? (
-                <ContactList
-                    contacts={filteredContacts}
-                    onDelete={deleteContact}
-                />
+            <Filter title={'Find contacts by name'} />
+            {contacts.length ? (
+                <ContactList contacts={contacts} />
             ) : (
                 <Alert className="Alert" variant="dark">
                     Nothing found

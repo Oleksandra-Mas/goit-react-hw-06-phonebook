@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import shortid from 'shortid';
 import { Button, Form } from 'react-bootstrap';
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
+
+import contactsActions from '../../store/contacts/actions';
 
 const FormWrapper = styled.form`
     display: flex;
@@ -13,12 +15,14 @@ const FormWrapper = styled.form`
     margin: 0 auto 20px;
 `;
 
-export default function ContactForm({ onSubmit }) {
+export default function ContactForm() {
     const [name, setName] = useState('');
     const [number, setNumber] = useState('');
 
     const nameId = shortid.generate();
     const numberId = shortid.generate();
+    const dispatch = useDispatch();
+
     const handleInputChange = event => {
         const { value, name } = event.target;
         switch (name) {
@@ -34,7 +38,7 @@ export default function ContactForm({ onSubmit }) {
     };
     const handleSubmit = event => {
         event.preventDefault();
-        onSubmit({ name, number });
+        dispatch(contactsActions.addContact({ name, number }));
         reset();
     };
 
@@ -76,6 +80,3 @@ export default function ContactForm({ onSubmit }) {
         </FormWrapper>
     );
 }
-ContactForm.propTypes = {
-    onSubmit: PropTypes.func.isRequired,
-};

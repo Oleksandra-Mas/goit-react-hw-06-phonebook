@@ -1,8 +1,12 @@
 import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import shortid from 'shortid';
 import styled from 'styled-components';
 import { Form } from 'react-bootstrap';
+
+import contactsActions from '../../store/contacts/actions';
+import { getFilter } from '../../store/contacts/selectors';
 
 const Label = styled.label`
     display: flex;
@@ -12,10 +16,15 @@ const Label = styled.label`
     margin: 0 auto;
 `;
 
-export default function Filter({ filter, title, onChange }) {
+export default function Filter({ title }) {
+    const dispatch = useDispatch();
+    const filter = useSelector(getFilter);
+
+    const onChange = value => dispatch(contactsActions.changeFilter(value));
+
     const handleFilterChange = event => {
         const { value } = event.target;
-        onChange(value);
+        onChange(value.toLowerCase());
     };
 
     const filterId = shortid.generate();
@@ -35,7 +44,5 @@ export default function Filter({ filter, title, onChange }) {
     );
 }
 Filter.propTypes = {
-    filter: PropTypes.string.isRequired,
     title: PropTypes.string,
-    onChange: PropTypes.func.isRequired,
 };
