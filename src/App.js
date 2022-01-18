@@ -1,5 +1,4 @@
-import { useEffect, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.css';
 import { Alert } from 'react-bootstrap';
 import { ToastContainer } from 'react-toastify';
@@ -10,18 +9,9 @@ import ContactForm from './components/ContactForm';
 import ContactList from './components/ContactList';
 import Filter from './components/Filter/';
 import { getVisibleContacts } from './store/contacts/selectors';
-import contactsActions from './store/contacts/actions';
 
 export default function App() {
     const contacts = useSelector(getVisibleContacts);
-    const dispatch = useDispatch();
-    const firstRender = useRef(true);
-
-    useEffect(() => {
-        if (firstRender.current) {
-            dispatch(contactsActions.getContacts());
-        }
-    }, []);
 
     return (
         <div className="App">
